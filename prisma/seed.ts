@@ -20,7 +20,7 @@ async function main() {
             data: {
                 name: 'Luis Hlatki',
                 email: 'luis@guilhermeh.me',
-                password: await hash('010203', 8), // Hash the password
+                password: await hash('123', 8), // Hash the password
                 role: 'ADMIN', // or 'ADMIN' as needed
                 companyId: company.id,
             },
