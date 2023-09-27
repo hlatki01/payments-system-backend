@@ -113,10 +113,6 @@ class OrderController {
                 const createPayment = await gatewayService.createPayment(payload);
 
                 if (createPayment) {
-
-                    console.log(createPayment);
-
-
                     const updatedOrder = await orderService.update({
                         orderId,
                         country: orderDetails.country,
