@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// This is your updated Prisma schema file
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  password  String
+  role      Roles     @default(USER)
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  deleted   Boolean   @default(false)
+  companyId String?
+  company   Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  payments  Payment[]
+  logs      Logs[]
+  Order     Order[]
+
+  @@map("users")
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  logo      String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  deleted   Boolean   @default(false)
+
+  users      User[]
+  categories Category[]
+  products   Product[]
+  payments   Payment[]
+  logs       Logs[]
+  Order      Order[]
+
+  @@map("companies")
+}
+
+model Payment {
+  id              String        @id @default(uuid())
+  invoice         String
+  amount          Float
+  description     String?
+  redirectUrl     String?
+  paymentType     PaymentType?
+  paymentMethodId String?
+  cardBrand       CardBrand?
+  paymentData     Json?
+  userId          String
+  companyId       String
+  createdAt       DateTime?     @default(now())
+  updatedAt       DateTime?     @default(now())
+  deleted         Boolean       @default(false)
+  status          PaymentStatus @default(PENDING)
+
+  user    User    @relation(fields: [userId], references: [id])
+  company Company @relation(fields: [companyId], references: [id])
+
+  @@map("payments")
+}
+
+model Logs {
+  id        Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+  action    String
+  details   String?  @db.LongText()
+  userId    String? // If you want to associate logs with a user
+  companyId String? // If you want to associate logs with a company
+
+  user    User?    @relation(fields: [userId], references: [id])
+  company Company? @relation(fields: [companyId], references: [id])
+
+  @@map("logs")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  deleted   Boolean   @default(false)
+  companyId String?
+  company   Company?  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  Product Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @default(now())
+  deleted     Boolean   @default(false)
+
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  orders Order[] @relation("OrderProduct")
+
+  @@map("products")
+}
+
+model Order {
+  id              String            @id @default(uuid())
+  orderNumber     String            @unique
+  createdAt       DateTime?         @default(now())
+  updatedAt       DateTime?         @default(now())
+  deleted         Boolean           @default(false)
+  userId          String
+  companyId       String
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company         Company           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  products        Product[]         @relation("OrderProduct")
+  status          PaymentStatus     @default(PENDING)
+  paymentType     PaymentType?
+  paymentMethodId String?
+  country         AllowedCountries  @default(BR)
+  currency        AllowedCurrencies @default(BRL)
+  payerName       String?
+  payerDocument   String?
+  payerEmail      String?           @default("not-provided@meubot.chat")
+  paymentData     Json?
+  invoice         String?
+
+  @@map("orders")
+}
+
+enum Roles {
+  ADMIN
+  USER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REJECTED
+  CANCELLED
+  AUTHORIZED
+  VERIFIED
+}
+
+enum PaymentType {
+  TICKET
+  CARD
+  BANK_TRANSFER
+}
+
+enum CardBrand {
+  MC
+  MD
+  VD
+  VI
+}
+
+enum AllowedCountries {
+  BR
+}
+
+enum AllowedCurrencies {
+  BRL
+}
