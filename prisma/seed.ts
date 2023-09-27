@@ -9,7 +9,7 @@ async function main() {
         const company = await prisma.company.create({
             data: {
                 name: 'Meubot',
-                email: 'contato@meubot.chat',
+                email: 'falecom@meubot.chat',
                 phone: '123-456-7890',
                 logo: 'company-logo.png',
             },
