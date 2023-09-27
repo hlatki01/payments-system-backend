@@ -6,10 +6,10 @@ import { isAuthenticated } from "./middlewares/isAuthenticated";
 import uploadConfig from "./config/multer";
 import { UserController } from "./controllers/UserController";
 import { CompanyController } from "./controllers/CompanyController";
-import { PaymentController } from "./controllers/PaymentController";
 import { CategoryController } from "./controllers/CategoryController";
 import { ProductController } from "./controllers/ProductController";
 import { OrderController } from "./controllers/OrderController";
+import { GatewayController } from "./controllers/GatewayController";
 
 const router = Router();
 
@@ -32,14 +32,10 @@ router.post("/companies/update", isAuthenticated, uploads.single("file"), compan
 router.post("/companies/delete", isAuthenticated, companyController.delete);
 router.get("/companies/one", isAuthenticated, companyController.one);
 
-//-- PAYMENTS ROUTES --
-const paymentController = new PaymentController();
-router.post("/payments/create", isAuthenticated, paymentController.create);
-router.post("/payments/notification", paymentController.notification);
-router.put("/payments/update", isAuthenticated, paymentController.update);
-router.get("/payments/all", isAuthenticated, paymentController.getAllPayments);
-router.get("/payments/user/:userId", isAuthenticated, paymentController.getPaymentsByUser);
-router.get("/payments/company/:companyId", isAuthenticated, paymentController.getPaymentsByCompany);
+//-- GATEWAY ROUTES --
+const gatewayController = new GatewayController();
+router.get("/payments/get-available-payments/:iso", isAuthenticated, gatewayController.getPaymentMethods);
+router.get("/payments/get-currency-exchange/:currency", isAuthenticated, gatewayController.getCurrencyExchange);
 
 //-- CATEGORY ROUTES --
 const categoryController = new CategoryController();

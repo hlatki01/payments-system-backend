@@ -1,6 +1,5 @@
 import { AllowedCountries, AllowedCurrencies, PaymentStatus, PaymentType } from "@prisma/client";
 import prismaClient from "../prisma";
-import PaymentService from "./PaymentService";
 
 interface OrderRequest {
     orderId?: string;
@@ -19,7 +18,6 @@ interface OrderRequest {
     paymentData?: Record<string, any>;
     invoice?: string;
 }
-const paymentService = new PaymentService();
 
 
 class OrderService {

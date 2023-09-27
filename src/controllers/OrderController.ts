@@ -1,13 +1,10 @@
 import { Request, Response } from "express";
 import { OrderService } from "../../src/services/OrderService";
-import PaymentService from "../services/PaymentService";
 import prismaClient from "../prisma";
-import { PaymentController } from "./PaymentController";
 import { GatewayService } from "../services/GatewayService";
 
 const orderService = new OrderService();
 const gatewayService = new GatewayService();
-const paymentService = new PaymentService();
 
 
 class OrderController {
