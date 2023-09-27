@@ -25,8 +25,6 @@ async function main() {
                 companyId: company.id,
             },
         });
-
-        console.log('Initial company and user created.');
     } catch (error) {
         console.error('Error seeding the database:', error);
     } finally {
